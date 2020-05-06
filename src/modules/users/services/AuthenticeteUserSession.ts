@@ -1,6 +1,7 @@
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import authoConfig from '@config/auth';
+import { injectable, inject } from 'tsyringe';
 
 import AppError from '@shared/erros/AppError';
 
@@ -18,8 +19,12 @@ interface IResponse {
   token: string;
 }
 
+@injectable()
 class AuthenticateUserSession {
-  constructor(private usersRepository: IAppointmentsRepository) {}
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IAppointmentsRepository,
+  ) {}
 
   public async execute({ email, password }: IRequest): Promise<IResponse> {
     const user = await this.usersRepository.findByEmail(email);
