@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import AppError from '@shared/erros/AppError';
 import FakeStorageProvider from '@shared/container/providers/StorageProvider/fakes/FakeStorageProvider';
 import FakeUsersRepository from '../repositories/fakes/FakeUsersRepository';
@@ -5,14 +6,14 @@ import UpdateUsersAvatarServices from './UpdateUsersAvatarSevices';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeStorageProvider: FakeStorageProvider;
-let UpdateUserAvatar: UpdateUsersAvatarServices;
+let updateUserAvatar: UpdateUsersAvatarServices;
 
 describe('UpdateUserAvatar', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeStorageProvider = new FakeStorageProvider();
 
-    UpdateUserAvatar = new UpdateUsersAvatarServices(
+    updateUserAvatar = new UpdateUsersAvatarServices(
       fakeUsersRepository,
       fakeStorageProvider,
     );
@@ -25,24 +26,19 @@ describe('UpdateUserAvatar', () => {
       password: '123456',
     });
 
-    await UpdateUserAvatar.execute({
+    await updateUserAvatar.execute({
       user_id: user.id,
-      avatarFilename: 'avatar.jgp',
+      avatarFilename: 'avatar.jpg',
     });
 
-    expect(user.avatar).toHaveProperty('avatar.jpg');
+    expect(user.avatar).toBe('avatar.jpg');
   });
 
   it('should be able to update avatar from none existing user', async () => {
-    await UpdateUserAvatar.execute({
-      user_id: 'not existing',
-      avatarFilename: 'avatar.jgp',
-    });
-
     await expect(
-      UpdateUserAvatar.execute({
-        user_id: 'not existing',
-        avatarFilename: 'avatar.jgp',
+      updateUserAvatar.execute({
+        user_id: 'not-existing',
+        avatarFilename: 'avatar.jpg',
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
@@ -56,14 +52,14 @@ describe('UpdateUserAvatar', () => {
       password: '123456',
     });
 
-    await UpdateUserAvatar.execute({
+    await updateUserAvatar.execute({
       user_id: user.id,
-      avatarFilename: 'avatar.jgp',
+      avatarFilename: 'avatar.jpg',
     });
 
-    await UpdateUserAvatar.execute({
+    await updateUserAvatar.execute({
       user_id: user.id,
-      avatarFilename: 'avatar2.jgp',
+      avatarFilename: 'avatar2.jpg',
     });
 
     expect(deleteFile).toHaveBeenCalledWith('avatar.jpg');
