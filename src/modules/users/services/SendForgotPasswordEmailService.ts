@@ -6,8 +6,6 @@ import IMailProvider from '@shared/container/providers/MailProvider/models/IMail
 import IUsersRepository from '../repositories/IUsersRepository';
 import IUserTokensRepository from '../repositories/IUsersTokensRepository';
 
-// import User from '../infra/typeorm/entities/Users';
-
 interface IRequest {
   email: string;
 }
@@ -52,7 +50,7 @@ class SendForgotPasswordEmailService {
         variables: {
           name: user.name,
           token,
-          link: `http://localhost:3000/reset_password?token=${token}`,
+          link: `${process.env.APP_WEB_URL}/reset_password?token=${token}`,
         },
       },
     });
